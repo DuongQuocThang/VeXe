@@ -1,0 +1,63 @@
+[
+	{
+		"ten":"TPHCM - Hà Nội",
+		"loai":[
+		{
+			"tenloai":"A",
+			"soluong":50,
+			"gia":100
+		},
+		{
+			"tenloai":"B",
+			"soluong":80,
+			"gia":80
+		},
+		{
+			"tenloai":"C",
+			"soluong":40,
+			"gia":60
+			}
+		]
+	},
+	{
+		"ten":"TPHCM - Huế",
+		"loai":[
+		{
+			"tenloai":"A",
+			"soluong":35,
+			"gia":60
+		},
+		{
+			"tenloai":"B",
+			"soluong":54,
+			"gia":50
+		},
+		{
+			"tenloai":"C",
+			"soluong":48,
+			"gia":40
+		}
+		]
+	},
+	{
+		"ten":"Hà Nội - Đà Lạt",
+		"loai":[
+		{
+			"tenloai":"A",
+			"soluong":70,
+			"gia":120
+		},
+		{
+			"tenloai":"B",
+			"soluong":50,
+			"gia":90
+		},
+		{
+			"tenloai":"C",
+			"soluong":30,
+			"gia":70
+		}
+		]
+	}
+]
+
