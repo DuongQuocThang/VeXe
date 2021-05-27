@@ -11,6 +11,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using VeXeServer;
+using Newtonsoft.Json.Linq;
 
 namespace VeXe
 {
@@ -72,8 +73,6 @@ namespace VeXe
                 byte[] recv = new byte[1024];
                 client.Receive(recv);
                 s = Encoding.UTF8.GetString(recv);
-               
-                AddingMessage(s);
        
             }
            
@@ -87,10 +86,36 @@ namespace VeXe
        void ImportJSON()
         {
             string content = System.IO.File.ReadAllText("F:\\VeXe\\chuyenxe.json");
+            dynamic data = JArray.Parse(content);
             AddingMessage(content);
-            chuyenXe = Newtonsoft.Json.JsonConvert.DeserializeObject<List<ChuyenXe>>(content);
-            string s = "" + chuyenXe.Count;
-            AddingMessage(s);
+            List<ChuyenXe> chuyenXes = new List<ChuyenXe>();
+            foreach (var item in data)
+            {
+                List<LoaiVe> loaiVes = new List<LoaiVe>();
+                foreach (var loaiVe in item.loai)
+                {
+                    loaiVes.Add(new LoaiVe
+                    {
+                        TenLoaiVe = loaiVe.tenloai,
+                        SoLuong = loaiVe.soluong,
+                        GiaVe = loaiVe.gia
+                    });
+                }
+
+                chuyenXes.Add(new ChuyenXe
+                {
+                    TenChuyenXe = item["ten"].ToString(),
+                    loaiVeList = loaiVes
+                });
+            }
+
+            //chuyenXe = Newtonsoft.Json.JsonConvert.DeserializeObject<List<ChuyenXe>>(content);
+            //string s = "" + chuyenXe.Count;
+            //foreach(var x in chuyenXe)
+            //{
+            //   string a = x.TenChuyenXe;
+            //}    
+            //AddingMessage(s);
 
                
         }
