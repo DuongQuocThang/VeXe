@@ -20,15 +20,17 @@ namespace VeXe
         public server()
         {
             InitializeComponent();
+
             Control.CheckForIllegalCrossThreadCalls = false;
             Connect();
-            ImportJSON();
+            
         }
         List<ChuyenXe> chuyenXe = new List<ChuyenXe>();
         IPEndPoint ipe;
         Socket client;
         TcpListener tcpListener;
-
+        static string yeuCauTuClient = "";
+        static int tongTien;
         private void listView1_SelectedIndexChanged(object sender, EventArgs e)
         {
 
@@ -62,7 +64,8 @@ namespace VeXe
         }
         void Send(Socket client)
         {
-             
+            byte[] a = Encoding.UTF8.GetBytes(xuLy());
+            client.Send(a);
         }
         void Receive(Object obj)
         {
@@ -73,21 +76,22 @@ namespace VeXe
                 byte[] recv = new byte[1024];
                 client.Receive(recv);
                 s = Encoding.UTF8.GetString(recv);
-       
+                yeuCauTuClient = s;
+                AddingMessage("Đã nhận yêu cầu từ client");
             }
-           
-           
+            
         }
-        void AddingMessage(string mess)
+        
+        public void AddingMessage(string mess)
         {
             listView1.Items.Add(mess);
             
         }
-       void ImportJSON()
+       List<ChuyenXe> ImportJSON()
         {
             string content = System.IO.File.ReadAllText("F:\\VeXe\\chuyenxe.json");
             dynamic data = JArray.Parse(content);
-            AddingMessage(content);
+            //AddingMessage(content);
             List<ChuyenXe> chuyenXes = new List<ChuyenXe>();
             foreach (var item in data)
             {
@@ -107,8 +111,10 @@ namespace VeXe
                     TenChuyenXe = item["ten"].ToString(),
                     loaiVeList = loaiVes
                 });
+                
             }
-
+            
+            
             //chuyenXe = Newtonsoft.Json.JsonConvert.DeserializeObject<List<ChuyenXe>>(content);
             //string s = "" + chuyenXe.Count;
             //foreach(var x in chuyenXe)
@@ -116,8 +122,49 @@ namespace VeXe
             //   string a = x.TenChuyenXe;
             //}    
             //AddingMessage(s);
-
+            return chuyenXes;
                
+        }
+        
+        private void button2_Click(object sender, EventArgs e)
+        {
+            //check();
+            Send(client);
+        }
+        
+        string xuLy()
+        {
+            int lengthTEN = yeuCauTuClient.IndexOf("!") - yeuCauTuClient.IndexOf("@");
+            int lengthLOAI = yeuCauTuClient.IndexOf("#") - yeuCauTuClient.IndexOf("!");
+            int lengthSL = yeuCauTuClient.IndexOf("$") - yeuCauTuClient.IndexOf("#");
+            string ten = yeuCauTuClient.Substring(yeuCauTuClient.IndexOf("@") + 1, lengthTEN - 1);
+            string loai = yeuCauTuClient.Substring(yeuCauTuClient.IndexOf("!") + 1, lengthLOAI - 1);
+            string sl = yeuCauTuClient.Substring(yeuCauTuClient.IndexOf("#") + 1, lengthSL - 1);
+            chuyenXe = ImportJSON();
+            foreach(var cx in chuyenXe)
+            {
+                List<LoaiVe> lv = cx.loaiVeList;
+                if(cx.TenChuyenXe.Contains(ten))
+                {
+                    cx.loaiVeList = new List<LoaiVe>();
+                    foreach (var ve in lv)
+                    {
+                        
+                        if(ve.TenLoaiVe.Contains(loai))
+                        {
+                            if(int.Parse(sl)<=ve.SoLuong)
+                            {
+                                tongTien = int.Parse(sl) * ve.GiaVe;
+
+                            }    
+                        }    
+                    }    
+                }    
+            }
+            //AddingMessage(ten);
+            //AddingMessage(loai);
+            //AddingMessage(sl);
+            return tongTien.ToString();
         }
     }
 }
